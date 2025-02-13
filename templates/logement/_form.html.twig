@@ -1,0 +1,33 @@
+{{ form_start(form) }}
+    <div class="mb-3">
+        {{ form_label(form.titre, 'Title', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.titre, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.titre) }}
+    </div>
+
+    <div class="mb-3">
+        {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.description) }}
+    </div>
+
+    <div class="mb-3">
+        {{ form_label(form.localisation, 'Location', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.localisation, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.localisation) }}
+    </div>
+
+    <div class="mb-3">
+        {{ form_label(form.prix, 'Price', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.prix, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.prix) }}
+    </div>
+
+    <div class="mb-3">
+        {{ form_label(form.photo, 'Image', {'label_attr': {'class': 'form-label'}}) }}
+        {{ form_widget(form.photo, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.photo) }}
+    </div>
+    
+    <button type="submit" class="btn btn-primary">Create Logement</button>
+{{ form_end(form) }}

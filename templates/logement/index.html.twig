@@ -1,43 +1,50 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Logement index{% endblock %}
+{% block title %}Logements{% endblock %}
 
 {% block body %}
-    <h1>Logement index</h1>
+    <div class="container">
+        <h1 class="my-4">Logements</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Titre</th>
-                <th>Description</th>
-                <th>Localisation</th>
-                <th>Prix</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for logement in logements %}
-            <tr>
-                <td>{{ logement.id }}</td>
-                <td>{{ logement.titre }}</td>
-                <td>{{ logement.description }}</td>
-                <td>{{ logement.localisation }}</td>
-                <td>{{ logement.prix }}</td>
-                <td>
-                    <a href="{{ path('app_logement_show', {'id': logement.id}) }}">show</a>
-                    {% if app.user == logement.owner %}
-                        <a href="{{ path('app_logement_edit', {'id': logement.id}) }}">edit</a>
-                    {% endif %}
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="6">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+        <div class="row">
+            {% for logement in logements %}
+                <div class="col-md-4 mb-4 ">
+                    <div class="card" style="border: 1px solid #e0e0e0; background-color: transparent;">
+                        {# Display the image if available #}
+                        <a href="{{ path('app_logement_show', {'id': logement.id}) }}">
+                            {% if logement.image starts with 'http' %}
+                                <img src="{{ logement.image }}" class="card-img-top" alt="{{ logement.titre }}" style="transition: transform 0.3s ease;">
+                            {% else %}
+                                <img src="{{ asset('uploads/photos/' ~ logement.image) }}" class="card-img-top" alt="{{ logement.titre }}" style="transition: transform 0.3s ease;">
+                            {% endif %}
+                        </a>
 
-    <a href="{{ path('app_logement_new') }}">Create new</a>
+                        <div class="card-body">
+                            <h5 class="card-title px-3">{{ logement.titre }}</h5>
+                            <p class="card-text px-3">{{ logement.description }}</p>
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item"><strong>Localisation:</strong> {{ logement.localisation }}</li>
+                              <li class="list-group-item text-success" style=" font-size: 1.4em;">
+    <strong>Prix:</strong> {{ logement.prix }} €
+</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <div class="col-12">
+                    <div class="alert alert-info" role="alert">
+                        Aucun logement trouvé.
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <style>
+        .card-img-top:hover {
+            transform: scale(1.05);
+            cursor: pointer;
+        }
+    </style>
 {% endblock %}

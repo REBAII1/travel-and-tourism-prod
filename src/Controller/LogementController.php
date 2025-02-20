@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Logement;
+use App\Entity\User;
 use App\Form\LogementType;
 use App\Repository\LogementRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,30 +25,37 @@ final class LogementController extends AbstractController
     }
 
     #[Route('/new', name: 'app_logement_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager , #[Autowire('%photo_dir%')] string $photoDir): Response
-    {
-        $logement = new Logement();
-        $form = $this->createForm(LogementType::class, $logement);
-        $form->handleRequest($request);
+    public function new(Request $request, EntityManagerInterface $entityManager, #[Autowire('%photo_dir%')] string $photoDir): Response
+{
+    $logement = new Logement();
+    $form = $this->createForm(LogementType::class, $logement);
+    $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            if($photo = $form['photo']->getData()){
-                $fileName = uniqid().'.'.$photo->guessExtension();
-                $photo->move($photoDir,$fileName);
-            };
+    if ($form->isSubmitted() && $form->isValid()) {
+        if ($photo = $form['photo']->getData()) {
+            $fileName = uniqid().'.'.$photo->guessExtension();
+            $photo->move($photoDir, $fileName);
             $logement->setImage($fileName);
-            $logement->setOwner($this->getUser());
-            $entityManager->persist($logement);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('app_logement_index', [], Response::HTTP_SEE_OTHER);
         }
 
-        return $this->render('logement/new.html.twig', [
-            'logement' => $logement,
-            'form' => $form,
-        ]);
+        $user = $entityManager->getRepository(User::class)->find(1);
+        if (!$user) {
+            throw $this->createNotFoundException('User with ID 1 not found.');
+        }
+
+        $logement->setOwner($user);
+        $entityManager->persist($logement);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_logement_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    return $this->render('logement/new.html.twig', [
+        'logement' => $logement,
+        'form' => $form,
+    ]);
+}
+
 
     #[Route('/{id}', name: 'app_logement_show', methods: ['GET'])]
     public function show(Logement $logement): Response
